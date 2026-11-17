@@ -20,6 +20,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -109,15 +110,6 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          {user && (
-            <Link
-              href={dashboardHref}
-              aria-current={isActive("/dashboard") ? "page" : undefined}
-              className={linkClass("/dashboard")}
-            >
-              Dashboard
-            </Link>
-          )}
         </div>
 
         {/* Right side */}
@@ -126,16 +118,6 @@ export default function Navbar() {
             <span className="h-8 w-24 animate-pulse rounded-full bg-blush/70" />
           ) : user ? (
             <>
-              <Link
-                href={dashboardHref}
-                className={cn(
-                  buttonVariants({ size: "sm" }),
-                  "hidden rounded-full bg-plum px-5 text-cream hover:bg-plum-deep lg:inline-flex"
-                )}
-              >
-                Dashboard
-              </Link>
-
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
@@ -169,14 +151,16 @@ export default function Navbar() {
                   sideOffset={8}
                   className="w-56 rounded-xl border border-blush bg-cream p-1.5 text-ink"
                 >
-                  <DropdownMenuLabel className="px-3 py-2">
-                    <span className="block truncate text-sm font-semibold text-plum">
-                      {user.name ?? "Luma member"}
-                    </span>
-                    <span className="block truncate text-xs font-normal text-luma-muted">
-                      {user.email}
-                    </span>
-                  </DropdownMenuLabel>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="px-3 py-2">
+                      <span className="block truncate text-sm font-semibold text-plum">
+                        {user.name ?? "Luma member"}
+                      </span>
+                      <span className="block truncate text-xs font-normal text-luma-muted">
+                        {user.email}
+                      </span>
+                    </DropdownMenuLabel>
+                  </DropdownMenuGroup>
                   <DropdownMenuSeparator className="bg-blush" />
                   <DropdownMenuItem
                     render={<Link href="/profile" />}
@@ -266,6 +250,7 @@ export default function Navbar() {
                   return (
                     <SheetClose
                       key={link.href}
+                      nativeButton={false}
                       render={<Link href={link.href} />}
                     >
                       <span
@@ -287,16 +272,10 @@ export default function Navbar() {
 
                 {user ? (
                   <>
-                    <SheetClose render={<Link href={dashboardHref} />}>
-                      <span className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink hover:bg-rose-soft/70">
-                        <HiSquares2X2
-                          className="size-5 shrink-0"
-                          aria-hidden="true"
-                        />
-                        Dashboard
-                      </span>
-                    </SheetClose>
-                    <SheetClose render={<Link href="/profile" />}>
+                    <SheetClose
+                      nativeButton={false}
+                      render={<Link href="/profile" />}
+                    >
                       <span className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink hover:bg-rose-soft/70">
                         <HiUser
                           className="size-5 shrink-0"
@@ -319,7 +298,10 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <SheetClose render={<Link href="/sign-in" />}>
+                    <SheetClose
+                      nativeButton={false}
+                      render={<Link href="/sign-in" />}
+                    >
                       <span className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink hover:bg-rose-soft/70">
                         <HiUser
                           className="size-5 shrink-0"
@@ -328,7 +310,10 @@ export default function Navbar() {
                         Sign In
                       </span>
                     </SheetClose>
-                    <SheetClose render={<Link href="/sign-up" />}>
+                    <SheetClose
+                      nativeButton={false}
+                      render={<Link href="/sign-up" />}
+                    >
                       <span className="flex items-center gap-3 rounded-lg bg-plum px-3 py-2.5 text-sm font-medium text-cream">
                         <HiUserCircle
                           className="size-5 shrink-0"
