@@ -55,7 +55,7 @@ export default function Navbar() {
   const router = useRouter();
 
   const isAdmin = user?.role === "admin";
-  const dashboardHref = isAdmin ? "/dashboard/admin" : "/dashboard";
+  const dashboardHref = isAdmin ? "/dashboard/admin" : "/dashboard/patrons";
 
   async function handleSignOut() {
     await signOut();
