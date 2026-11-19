@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import {
     Scissors,
     Tag,
@@ -12,8 +13,17 @@ import {
     Loader2,
     CheckCircle2,
     EyeOff,
-    type LucideIcon,
 } from "lucide-react";
+import type {
+    ServiceFormValues,
+    FormErrors,
+    FieldProps,
+    IconInputProps,
+} from "@/typescript";
+import { createService } from "@/lib/actions/services";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
 
 const CATEGORIES = [
     "Haircut & Styling",
@@ -28,31 +38,6 @@ const CATEGORIES = [
 const MAX_IMAGE_MB = 5;
 const MAX_DESC = 300;
 
-type ServiceStatus = "active" | "inactive";
-
-type ServiceFormValues = {
-    serviceName: string;
-    category: string;
-    description: string;
-    price: string;
-    duration: string;
-    status: ServiceStatus;
-};
-
-type FormErrors = Partial<Record<keyof ServiceFormValues | "image", string>>;
-
-type FieldProps = {
-    label: string;
-    error?: string;
-    right?: React.ReactNode;
-    children: React.ReactNode;
-};
-
-type IconInputProps = {
-    icon: LucideIcon;
-    children: React.ReactNode;
-};
-
 const initialForm: ServiceFormValues = {
     serviceName: "",
     category: "",
@@ -60,6 +45,8 @@ const initialForm: ServiceFormValues = {
     price: "",
     duration: "",
     status: "active",
+    image: "",
+    adminId: "",
 };
 
 
@@ -88,15 +75,34 @@ function IconInput({ icon: Icon, children }: IconInputProps) {
     );
 }
 
+function readForm(form: HTMLFormElement, imageUrl: string, adminId: string): ServiceFormValues {
+    const data = new FormData(form);
+    const value = (key: string) => String(data.get(key) ?? "").trim();
+
+    return {
+        serviceName: value("serviceName"),
+        category: value("category"),
+        description: value("description"),
+        price: Number(value("price")),
+        duration: Number(value("duration")),
+        status: value("status") === "inactive" ? "inactive" : "active",
+        image: imageUrl,
+        adminId,
+    };
+}
+
 const AddServicesPage = () => {
     const [form, setForm] = useState<ServiceFormValues>(initialForm);
-    const [imageFile, setImageFile] = useState<File | null>(null);
     const [preview, setPreview] = useState("");
     const [dragging, setDragging] = useState(false);
     const [errors, setErrors] = useState<FormErrors>({});
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState("");
     const [uploading, setUploading] = useState(false);
+    const [submitted, setSubmitted] = React.useState<ServiceFormValues | null>(null)
+
+    const router = useRouter();
+    const { data: session } = useSession()
 
     useEffect(() => {
         return () => {
@@ -183,21 +189,21 @@ const AddServicesPage = () => {
 
         try {
             setLoading(true);
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/services`, {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...form,
-                    price: Number(form.price),
-                    duration: Number(form.duration),
-                    image: imageUrl,
-                }),
-            });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(data.message || "Could not add the service.");
+            const service = readForm(e.currentTarget, imageUrl, session?.user?.id ?? "");
+            console.log('new service', service)
+            setSubmitted(service);
+            const result = await createService(service);
+            console.log('created service', result)
 
-            toast.success("Service added.");
+            if (result.insertedId) {
+                toast.success({
+                    title: 'service has been created',
+                    description: 'the service has been suceesfully created'
+                })
+                router.push('/dashboard/recruiter/jobs')
+            }
+
+            
             setForm(initialForm);
             removeImage();
             setErrors({});
@@ -438,7 +444,7 @@ const AddServicesPage = () => {
                         <button
                             type="submit"
                             disabled={loading || uploading}
-                            className="..."
+                            className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#6d2e46] text-base font-medium text-white transition hover:bg-[#512033] focus:outline-none focus:ring-4 focus:ring-[#d98c9a]/40 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {(loading || uploading) && <Loader2 className="h-4 w-4 animate-spin" />}
                             {uploading ? "Uploading image..." : loading ? "Adding service..." : "Add service"}
