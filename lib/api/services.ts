@@ -1,12 +1,28 @@
+import { ServiceStatus } from "@/typescript";
+
 const BASE_URL =
   (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").trim() || "http://localhost:8000"
 
 
+export  type Service = {
+  _id: string;
+  serviceName: string;
+  category: string;
+  description: string;
+  price: number;
+  duration: number;
+  image: string;
+  status: ServiceStatus;
+  adminId?: string;
+  createdAt: string; 
+};
 
-export const getService = async(query: string = "")=>{
+
+
+export const getService = async(query: string = ""): Promise<Service[]>=>{
     const res = await fetch(`${BASE_URL}/services?${query}`, {cache: "no-store"})
     if(!res.ok){
-        throw new Error(`The jobs API responded with ${res.status}.`)
+        throw new Error(`The service API responded with ${res.status}.`)
     }
 
     const data :unknown = await res.json()
@@ -14,5 +30,5 @@ export const getService = async(query: string = "")=>{
      if (!Array.isArray(data)) {
     throw new Error("The jobs API returned an unexpected response.")
   }
-  return data;
+  return data as Service[];
 }
