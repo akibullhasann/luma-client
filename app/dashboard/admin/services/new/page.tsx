@@ -196,10 +196,7 @@ const AddServicesPage = () => {
             console.log('created service', result)
 
             if (result.insertedId) {
-                toast.success({
-                    title: 'service has been created',
-                    description: 'the service has been suceesfully created'
-                })
+                toast.success('The service has been successfully created.')
                 router.push('/dashboard/recruiter/jobs')
             }
 
