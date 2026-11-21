@@ -21,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import { EditServiceDialog } from "./edit-service-dialog";
+import ServiceFilters from "./service-filters";
 
 type ManageServicesProps = {
   services: Service[];
@@ -45,6 +46,7 @@ export function ManageServices({ services: initialServices, error }: ManageServi
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
+  const [sort, setSort] = useState("");
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -99,6 +101,21 @@ export function ManageServices({ services: initialServices, error }: ManageServi
     },
   ];
 
+  const visible = services
+    .filter((s) => {
+      const matchesSearch = s.serviceName
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchesCategory = category ? s.category === category : true;
+      const matchesStatus = status ? s.status === status : true;
+      return matchesSearch && matchesCategory && matchesStatus;
+    })
+    .sort((a, b) => {
+      if (sort === "price_asc") return Number(a.price) - Number(b.price);
+      if (sort === "price_desc") return Number(b.price) - Number(a.price);
+      return 0;
+    });
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -141,38 +158,14 @@ export function ManageServices({ services: initialServices, error }: ManageServi
 
       {/* Filters */}
       <div className="rounded-2xl border border-[#eaddd8] bg-white p-5 shadow-sm shadow-[#6d2e46]/5 sm:p-6">
-        <div className="flex flex-col gap-3 md:flex-row">
-          <div className="relative flex-1">
-            <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#a99c96]"
-              aria-hidden="true"
-            />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by service name"
-              className={inputClass}
-            />
-          </div>
-          <div className="relative md:w-64">
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className={`${inputClass} appearance-none pr-10`}
-            >
-              <option value="">All categories</option>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#8a7f7a]"
-              aria-hidden="true"
-            />
-          </div>
-        </div>
+        <ServiceFilters
+          search={search}
+          setSearch={setSearch}
+          category={category}
+          setCategory={setCategory}
+          sort={sort}
+          setSort={setSort}
+        />
 
         <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-[#f1e7e3] pt-5">
           <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-[#a99c96]">
@@ -202,11 +195,11 @@ export function ManageServices({ services: initialServices, error }: ManageServi
             Service catalog
           </h2>
           <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#8a7f7a] ring-1 ring-[#eaddd8]">
-            {services.length} {services.length === 1 ? "service" : "services"}
+            {visible.length} {visible.length === 1 ? "service" : "services"}
           </span>
         </div>
 
-        {services.length === 0 && !error ? (
+        {visible.length === 0 && !error ? (
           <div className="flex flex-col items-center rounded-2xl border border-dashed border-[#eaddd8] bg-white py-20 text-center">
             <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-[#fdf9f6] text-[#c9a227]">
               <Inbox className="size-7" aria-hidden="true" />
@@ -225,7 +218,7 @@ export function ManageServices({ services: initialServices, error }: ManageServi
           </div>
         ) : (
           <div className="grid gap-4">
-            {services.map((s) => (
+            {visible.map((s) => (
               <div
                 key={s._id}
                 className="group flex flex-col gap-5 rounded-2xl border border-[#eaddd8] bg-white p-4 shadow-sm shadow-[#6d2e46]/5 transition duration-200 hover:-translate-y-0.5 hover:border-[#d98c9a]/50 hover:shadow-lg hover:shadow-[#6d2e46]/10 sm:flex-row sm:items-center sm:p-5"
