@@ -197,7 +197,7 @@ const AddServicesPage = () => {
 
             if (result.insertedId) {
                 toast.success('The service has been successfully created.')
-                router.push('/dashboard/recruiter/jobs')
+                router.push('/dashboard/admin/services')
             }
 
             

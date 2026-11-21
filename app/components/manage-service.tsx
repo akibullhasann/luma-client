@@ -123,7 +123,7 @@ export function ManageServices({ services: initialServices, error }: ManageServi
           </div>
         </div>
         <Link
-          href="/dashboard/admin/services/add"
+          href="/dashboard/admin/services/new"
           className="inline-flex items-center gap-2 rounded-xl bg-[#6d2e46] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#6d2e46]/25 transition hover:-translate-y-0.5 hover:bg-[#512033] hover:shadow-xl hover:shadow-[#6d2e46]/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6d2e46]"
         >
           <Plus className="size-4" aria-hidden="true" />

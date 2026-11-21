@@ -33,6 +33,9 @@ export const getService = async(query: string = ""): Promise<Service[]>=>{
   return data as Service[];
 }
 
+
+// services by id for getting single data
+
 export const getServicesById = async(id: string): Promise<Service | null>=>{
     const res = await fetch(`${BASE_URL}/services/${id}`, {cache: "no-store"})
     if(res.status === 404){

@@ -16,6 +16,7 @@ import {
 
 import { Toaster } from "@/components/ui/sonner";
 import type { Service } from "@/lib/api/services";
+import { createAppoinments } from "@/lib/actions/appoinments";
 
 export type BookingUser = {
   id: string;
@@ -60,17 +61,34 @@ export function ServiceDetails({ service, user }: ServiceDetailsProps) {
   const [time, setTime] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const minDate = new Date().toISOString().slice(0, 10);
 
   const isActive = service.status === "active";
   const isCustomer = Boolean(user && user.role !== "admin");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!isCustomer || !isActive) return;
+    if (!user || !isCustomer || !isActive) return;
 
-    setSubmitted(true);
-    toast.success("Appointment request sent! We'll be in touch soon.");
+    try {
+      setLoading(true);
+
+      await createAppoinments({
+        serviceId: service._id,
+        customerId: user.id,
+        appointmentDate: date,
+        timeSlot: time,
+        message,
+      });
+
+      setSubmitted(true);
+      toast.success("Appointment request sent! We'll be in touch soon.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -363,9 +381,10 @@ export function ServiceDetails({ service, user }: ServiceDetailsProps) {
 
                     <button
                       type="submit"
-                      className="w-full rounded-xl bg-[#6d2e46] px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#6d2e46]/25 transition hover:-translate-y-0.5 hover:bg-[#512033] hover:shadow-xl"
+                      disabled={loading}
+                      className="w-full rounded-xl bg-[#6d2e46] px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#6d2e46]/25 transition hover:-translate-y-0.5 hover:bg-[#512033] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      Request appointment
+                      {loading ? "Sending request..." : "Request appointment"}
                     </button>
                     <p className="text-center text-xs text-[#a99c96]">
                       No payment needed now. We&apos;ll confirm the details first.
