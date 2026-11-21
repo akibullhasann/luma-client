@@ -1,17 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowUpRight, Clock, Inbox, Scissors, Sparkles } from "lucide-react";
 
 import type { Service } from "@/lib/api/services";
 import ServiceFilters from "@/app/components/service-filters";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 type BrowseServicesProps = {
   services: Service[];
@@ -22,7 +16,6 @@ export function BrowseServices({ services, error }: BrowseServicesProps) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState("");
-  const [selected, setSelected] = useState<Service | null>(null);
 
   const visible = useMemo(() => {
     const text = search.trim().toLowerCase();
@@ -193,14 +186,13 @@ export function BrowseServices({ services, error }: BrowseServicesProps) {
                       </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setSelected(s)}
+                    <Link
+                      href={`/services/${s._id}`}
                       className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#6d2e46] px-4 py-2.5 text-sm font-semibold text-[#6d2e46] transition hover:bg-[#6d2e46] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6d2e46]"
                     >
                       View Details
                       <ArrowUpRight className="size-4" aria-hidden="true" />
-                    </button>
+                    </Link>
                   </div>
                 </article>
               ))}
@@ -208,65 +200,6 @@ export function BrowseServices({ services, error }: BrowseServicesProps) {
           )}
         </section>
       </div>
-
-      {/* Details dialog */}
-      <Dialog open={Boolean(selected)} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto border-[#eaddd8] bg-white p-0 sm:max-w-lg">
-          {selected && (
-            <>
-              <div className="relative h-60 overflow-hidden bg-[#f6e3e6]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={selected.image}
-                  alt={selected.serviceName}
-                  className="size-full object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <DialogHeader>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c9a227]">
-                    {selected.category}
-                  </p>
-                  <DialogTitle className="text-2xl font-bold text-[#2b2b2b]">
-                    {selected.serviceName}
-                  </DialogTitle>
-                  <DialogDescription className="text-sm leading-relaxed text-[#8a7f7a]">
-                    {selected.description || "A little something special, just for you."}
-                  </DialogDescription>
-                </DialogHeader>
-
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-[#fdf9f6] p-4 ring-1 ring-[#eaddd8]">
-                    <p className="text-xs font-medium uppercase tracking-wider text-[#a99c96]">
-                      Duration
-                    </p>
-                    <p className="mt-1 inline-flex items-center gap-1.5 text-base font-semibold text-[#2b2b2b]">
-                      <Clock className="size-4 text-[#c9a227]" aria-hidden="true" />
-                      {selected.duration} min
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-[#fdf9f6] p-4 ring-1 ring-[#eaddd8]">
-                    <p className="text-xs font-medium uppercase tracking-wider text-[#a99c96]">
-                      Price
-                    </p>
-                    <p className="mt-1 text-base font-bold text-[#c9a227]">
-                      ${Number(selected.price).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setSelected(null)}
-                  className="mt-6 w-full rounded-xl bg-[#6d2e46] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#512033]"
-                >
-                  Close
-                </button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </main>
   );
 }

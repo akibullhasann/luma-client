@@ -32,3 +32,22 @@ export const getService = async(query: string = ""): Promise<Service[]>=>{
   }
   return data as Service[];
 }
+
+export const getServicesById = async(id: string): Promise<Service | null>=>{
+    const res = await fetch(`${BASE_URL}/services/${id}`, {cache: "no-store"})
+    if(res.status === 404){
+        return null;
+    }
+    if(!res.ok){
+        throw new Error(`The service API responded with ${res.status}.`)
+    }
+
+    const data :unknown = await res.json()
+
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw new Error("The service API returned an unexpected response.")
+  }
+  return data as Service;
+}
+
+
