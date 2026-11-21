@@ -9,13 +9,11 @@ import { deleteService, updateService } from "@/lib/actions/services";
 import {
   CalendarDays,
   Check,
-  ChevronDown,
   Clock,
   Inbox,
   Pencil,
   Plus,
   Scissors,
-  Search,
   Sparkles,
   Trash2,
   X,
@@ -27,19 +25,6 @@ type ManageServicesProps = {
   services: Service[];
   error: string | null;
 };
-
-const CATEGORIES = [
-  "Haircut & Styling",
-  "Hair Coloring",
-  "Hair Treatment",
-  "Facial & Skincare",
-  "Makeup",
-  "Manicure & Pedicure",
-  "Spa & Massage",
-];
-
-const inputClass =
-  "h-11 w-full rounded-xl border border-[#eaddd8] bg-white pl-10 pr-4 text-sm text-[#2b2b2b] placeholder:text-[#a99c96] outline-none transition focus:border-[#d98c9a] focus:ring-4 focus:ring-[#d98c9a]/20";
 
 export function ManageServices({ services: initialServices, error }: ManageServicesProps) {
   const [services, setServices] = useState<Service[]>(initialServices);
