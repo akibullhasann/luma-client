@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import type { Service } from "@/lib/api/services";
 import { toast } from "sonner";
-import { deleteService, UpdateService } from "@/lib/actions/services";
+import { deleteService, updateService } from "@/lib/actions/services";
 import {
   CalendarDays,
   Check,
@@ -20,6 +20,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { EditServiceDialog } from "./edit-service-dialog";
 
 type ManageServicesProps = {
   services: Service[];
@@ -52,7 +53,7 @@ export function ManageServices({ services: initialServices, error }: ManageServi
     const next = service.status === "active" ? "inactive" : "active";
     try {
       setBusyId(service._id);
-      await UpdateService(service._id, { status: next });
+      await updateService(service._id, { status: next });
 
       setServices((prev) =>
         prev.map((s) => (s._id === service._id ? { ...s, status: next } : s))
@@ -81,6 +82,9 @@ export function ManageServices({ services: initialServices, error }: ManageServi
     }
   };
 
+  const handleUpdated = (updated: Service) => {
+  setServices((prev) => prev.map((s) => (s._id === updated._id ? updated : s)));
+};
   const tabs = [
     { value: "", label: "All", count: services.length },
     {
@@ -295,13 +299,7 @@ export function ManageServices({ services: initialServices, error }: ManageServi
                     {busyId === s._id ? "Updating..." : s.status === "active" ? "Active" : "Inactive"}
                   </button>
 
-                  <Link
-                    href={`/dashboard/admin/services/${s._id}/edit`}
-                    className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-[#6d2e46] ring-1 ring-[#eaddd8] transition hover:bg-[#fdf9f6] hover:ring-[#d98c9a]/50"
-                  >
-                    <Pencil className="size-3.5" aria-hidden="true" />
-                    Edit
-                  </Link>
+                  <EditServiceDialog service={s} onUpdated={handleUpdated} />
 
                   {confirmId === s._id ? (
                     <>

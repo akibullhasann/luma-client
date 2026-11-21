@@ -15,7 +15,7 @@ export const createService = async (data: ServiceFormValues) => {
 };
 
 
-export const UpdateService = async (id: string, data: Partial<ServiceFormValues>) => {
+export const updateService = async (id: string, data: Partial<ServiceFormValues>) => {
     const res = await fetch(`${BASE_URL}/services/${id}`, {
         method: "PATCH",
         headers: {
