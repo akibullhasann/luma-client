@@ -17,9 +17,11 @@ import type { Appointment } from "@/typescript";
 
 type PaymentCheckoutProps = {
   appointment: Appointment;
+   searchParams: Promise<{ canceled?: string | string[] }>
+
 };
 
-export function PaymentCheckout({ appointment: a }: PaymentCheckoutProps) {
+export function PaymentCheckout({ appointment: a, searchParams }: PaymentCheckoutProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePayNow = async () => {

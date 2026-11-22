@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PaymentCheckout } from "@/app/components/appoinments/payment-checkout";
 import { getAppointments } from "@/lib/api/appoinments";
 import { getSession } from "@/lib/core/server";
 import type { Appointment } from "@/typescript";
+import { PaymentCheckout } from "./payment-checkout";
 
 export const metadata: Metadata = {
   title: "Payment — SalonBook",
@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 export const instant = false;
 
-type PaymentPageProps = {
-  params: Promise<{ id: string }>;
+type CheckoutPageProps = {
+  searchParams: Promise<{ id?: string | string[]; canceled?: string | string[] }>;
 };
 
 type AppointmentResponse = Appointment & {
@@ -33,8 +33,13 @@ const normalizeAppointment = (item: AppointmentResponse): Appointment => {
   };
 };
 
-const PaymentPage = async ({ params }: PaymentPageProps) => {
-  const { id } = await params;
+const CheckoutPage = async ({ searchParams }: CheckoutPageProps) => {
+  const { canceled, id: rawId } = await searchParams;
+  const id = Array.isArray(rawId) ? rawId[0] ?? "" : rawId ?? "";
+  const wasCanceled = Array.isArray(canceled)
+    ? canceled.includes("true")
+    : canceled === "true";
+
   const session = await getSession();
   const customerId = session?.user.id;
 
@@ -51,6 +56,25 @@ const PaymentPage = async ({ params }: PaymentPageProps) => {
             className="mt-5 inline-flex rounded-xl bg-[#6d2e46] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#512033]"
           >
             Sign In
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (!id) {
+    return (
+      <main className="min-h-svh bg-[#fdf9f6] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-lg rounded-2xl border border-[#eaddd8] bg-white p-8 text-center shadow-sm">
+          <h1 className="text-xl font-bold text-[#2b2b2b]">Missing appointment</h1>
+          <p className="mt-2 text-sm text-[#8a7f7a]">
+            Please select an appointment to pay for.
+          </p>
+          <Link
+            href="/dashboard/patrons/appointments"
+            className="mt-5 inline-flex rounded-xl bg-[#6d2e46] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#512033]"
+          >
+            Back to My Appointments
           </Link>
         </div>
       </main>
@@ -99,7 +123,7 @@ const PaymentPage = async ({ params }: PaymentPageProps) => {
     );
   }
 
-  return <PaymentCheckout appointment={appointment} />;
+  return <PaymentCheckout appointment={appointment} wasCanceled={wasCanceled} />;
 };
 
-export default PaymentPage;
+export default CheckoutPage;

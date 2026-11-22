@@ -61,7 +61,7 @@ export function MyAppointments({
         }
     };
     const handlePay = (a: Appointment) => {
-        router.push(`/dashboard/patrons/appointments/${a._id}/pay`);
+        router.push(`/checkout?id=${a._id}`);
     };
 
     const count = (s: AppointmentStatus) =>

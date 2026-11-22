@@ -1,41 +1,44 @@
-import { NextResponse } from 'next/server'
-import { headers } from 'next/headers'
+import { NextResponse } from "next/server";
+import Stripe from "stripe";
 
-import { stripe } from '../../../lib/stripe'
-import { getSession } from '@/lib/core/server'
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export async function POST() {
+export async function POST(req: Request) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const appointmentId = typeof body.appointmentId === "string" ? body.appointmentId : "";
+    const serviceName = typeof body.serviceName === "string" && body.serviceName ? body.serviceName : "Salon Service";
+    const amount = Number(body.amount);
 
-    const userSession = await getSession();
-
-    try {
-        const headersList = await headers()
-        const origin = headersList.get('origin')
-
-        // Create Checkout Sessions from body params.
-        const session = await stripe.checkout.sessions.create({
-            line_items: [
-                {
-                    // Provide the exact Price ID (for example, price_1234) of the product you want to sell
-                    price: '{{PRICE_ID}}',
-                    quantity: 1,
-                },
-            ],
-            mode: 'payment',
-            customer_email: userSession?.user.email,
-            metadata:{
-                userId: userSession?.user.id as string
-            },
-            success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-            // Provide a name (for example, hosted_web_0001) to label this Checkout integration and measure its conversion independently
-            integration_identifier: 'hire_loop_web_001',
-        });
-        return NextResponse.redirect(session.url as string, 303)
-    } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        return NextResponse.json(
-            { error: error.message },
-            { status: 500 }
-        )
+    if (!appointmentId) {
+      return NextResponse.json({ error: "Missing appointmentId" }, { status: 400 });
     }
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
+    }
+
+    const origin = req.headers.get("origin") || process.env.BETTER_AUTH_URL || "http://localhost:3000";
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { name: serviceName },
+            unit_amount: Math.round(amount * 100),
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: { appointmentId },
+      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/checkout?id=${encodeURIComponent(appointmentId)}&canceled=true`,
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to create checkout session";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
