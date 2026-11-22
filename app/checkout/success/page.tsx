@@ -65,23 +65,30 @@ export default async function CheckoutSuccessPage({
 
   let updateWarning: string | null = null;
   const appointmentId = session.metadata?.appointmentId;
-  if (appointmentId) {
-    try {
-      const baseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").trim() || "http://localhost:8000";
-      const paymentId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
-      const res = await fetch(`${baseUrl}/appointments/${appointmentId}`, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ paymentStatus: "paid", paymentId }),
-        cache: "no-store",
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        updateWarning = data?.message || "Payment confirmed, but appointment status could not be updated automatically.";
-      }
-    } catch {
-      updateWarning = "Payment confirmed, but appointment status could not be updated automatically.";
+  const paymentIntentId =
+    typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
+
+  try {
+    const baseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").trim() || "http://localhost:8000";
+    const res = await fetch(`${baseUrl}/payments/confirm`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        appointmentId,
+        stripeSessionId: session.id,
+        paymentIntentId,
+        amountTotal: session.amount_total,
+        currency: session.currency,
+        customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
+      }),
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      updateWarning = data?.message || "Payment confirmed, but it could not be recorded automatically.";
     }
+  } catch {
+    updateWarning = "Payment confirmed, but it could not be recorded automatically.";
   }
 
   return (

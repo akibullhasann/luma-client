@@ -59,7 +59,7 @@ export function BrowseServices({
           aria-hidden="true"
           className="pointer-events-none absolute -bottom-32 left-1/4 size-80 rounded-full bg-[#c9a227]/10 blur-3xl"
         />
-        <div className="relative mx-auto max-w-6xl text-center">
+        <div className="relative mx-auto max-w-[1600px] text-center">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#f3d9df] backdrop-blur">
             <Sparkles className="size-3.5" aria-hidden="true" />
             Luma Salon
@@ -78,7 +78,7 @@ export function BrowseServices({
         </div>
       </section>
 
-      <div className="relative mx-auto -mt-12 w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto -mt-12 w-full max-w-[1600px] px-4 sm:px-6 lg:px-8">
         {error && (
           <p
             role="alert"
@@ -154,7 +154,7 @@ export function BrowseServices({
               )}
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {visible.map((s) => (
                 <article
                   key={s._id}

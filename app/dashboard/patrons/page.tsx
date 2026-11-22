@@ -69,7 +69,7 @@ const PatronsDashboardPage = async () => {
 
   return (
     <main className="min-h-svh bg-[#fdf9f6] px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-5xl space-y-8">
+      <div className="mx-auto w-full max-w-[1600px] space-y-8">
         {/* Welcome banner */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#6d2e46] to-[#512033] p-7 text-white shadow-xl shadow-[#6d2e46]/20 sm:p-10">
           <div className="absolute -right-12 -top-16 size-56 rounded-full bg-white/5" aria-hidden="true" />

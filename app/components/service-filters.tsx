@@ -20,7 +20,7 @@ const CATEGORIES = [
 ];
 
 const inputClass =
-  "h-11 rounded-lg border border-[#eaddd8] bg-white px-3 text-sm outline-none focus:border-[#d98c9a]";
+  "h-11 rounded-xl border border-[#eaddd8] bg-white px-3.5 text-sm text-[#2b2b2b] outline-none transition placeholder:text-[#8a7f7a]/70 focus:border-[#d98c9a] focus:ring-4 focus:ring-[#d98c9a]/15";
 
 export default function ServiceFilters({
   search,

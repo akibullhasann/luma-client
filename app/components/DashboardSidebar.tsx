@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
     Sidebar,
     SidebarContent,
@@ -101,40 +102,56 @@ const menuItemsByRole: Record<DashboardRole, DashboardMenuItem[]> = {
 
 export function DashboardSidebar() {
     const { data: session } = useSession();
+    const pathname = usePathname();
     const role: DashboardRole = session?.user?.role === "admin" ? "admin" : "patrons"
     return (
-        <Sidebar style={{ "--sidebar": "#fdf9f6" } as React.CSSProperties}>
-            <SidebarHeader className="border-b border-blush px-4 py-4">
+        <Sidebar style={{ "--sidebar": "#fdf9f6" } as React.CSSProperties} className="border-r border-[#eaddd8]">
+            <SidebarHeader className="border-b border-[#eaddd8] px-4 py-5">
                 <Link
                     href="/"
                     className="flex items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-plum"
                     aria-label="Luma home"
                 >
-                    <span className="flex size-8 items-center justify-center rounded-full bg-plum text-cream shadow-sm">
+                    <span className="flex size-9 items-center justify-center rounded-full bg-[#6d2e46] text-[#fdf9f6] shadow-sm">
                         <Sparkles className="size-4" aria-hidden="true" />
                     </span>
-                    <span className="font-heading text-xl font-semibold tracking-tight text-plum">
-                        Luma
-                    </span>
+                    <div>
+                        <span className="block font-heading text-xl font-semibold tracking-tight text-[#6d2e46]">
+                            Luma
+                        </span>
+                        <span className="block text-[11px] uppercase tracking-[0.16em] text-[#8a7f7a]">
+                            Dashboard
+                        </span>
+                    </div>
                 </Link>
             </SidebarHeader>
-            <SidebarContent>
-                <SidebarGroup />
-                <SidebarGroup />
-                <SidebarGroup>
-                    <SidebarMenu>
-                        {menuItemsByRole[role].map((item) => (
-                            <SidebarMenuItem key={item.id}>
-                                <SidebarMenuButton render={<Link href={item.url} />}>
-                                    <item.icon />
-                                    <span>{item.name}</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
+            <SidebarContent className="px-3 py-4">
+                <SidebarGroup className="p-0">
+                    <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a7f7a]">
+                        {role === "admin" ? "Admin Menu" : "My Menu"}
+                    </p>
+                    <SidebarMenu className="gap-1">
+                        {menuItemsByRole[role].map((item) => {
+                            const isActive = pathname === item.url || (item.url !== "/dashboard/admin" && item.url !== "/dashboard/patrons" && pathname.startsWith(item.url + "/"));
+                            return (
+                                <SidebarMenuItem key={item.id}>
+                                    <SidebarMenuButton
+                                        render={<Link href={item.url} />}
+                                        isActive={isActive}
+                                        className="rounded-xl px-3 py-2.5 text-[#5d5550] transition hover:bg-[#f6e3e6] hover:text-[#6d2e46] data-[active=true]:bg-[#6d2e46] data-[active=true]:text-white data-[active=true]:shadow-sm"
+                                    >
+                                        <item.icon className="size-4" />
+                                        <span className="font-medium">{item.name}</span>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            );
+                        })}
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter />
+            <SidebarFooter className="border-t border-[#eaddd8] px-4 py-4">
+                <p className="text-xs text-[#8a7f7a]">Signed in as <span className="font-medium text-[#6d2e46] capitalize">{role}</span></p>
+            </SidebarFooter>
         </Sidebar>
     )
 }

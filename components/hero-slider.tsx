@@ -101,7 +101,7 @@ export default function HeroSlider() {
         </div>
       ))}
 
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center justify-center px-5 py-20 text-center text-white md:items-start md:px-8 md:text-left lg:px-12">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col items-center justify-center px-5 py-20 text-center text-white md:items-start md:px-8 md:text-left lg:px-12">
         <div className="max-w-3xl">
           <h1 className="font-heading text-4xl font-bold leading-[1.1] tracking-tight text-balance sm:text-5xl md:text-6xl lg:text-7xl">
             Book Your Perfect Look, Anytime

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import ConditionalNavbar from "@/components/conditional-navbar";
+import ConditionalFooter from "@/components/conditional-footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <ConditionalNavbar />
         </Suspense>
         {children}
+        <ConditionalFooter />
       </body>
     </html>
   );

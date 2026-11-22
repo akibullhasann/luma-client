@@ -99,7 +99,7 @@ export function ServiceDetails({ service, user }: ServiceDetailsProps) {
       <div className="border-b border-[#eaddd8] bg-white/70">
         <nav
           aria-label="Breadcrumb"
-          className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-4 text-sm text-[#8a7f7a] sm:px-6 lg:px-8"
+          className="mx-auto flex max-w-[1600px] items-center gap-2 px-4 py-4 text-sm text-[#8a7f7a] sm:px-6 lg:px-8"
         >
           <Link href="/" className="transition hover:text-[#6d2e46]">
             Home
@@ -115,7 +115,7 @@ export function ServiceDetails({ service, user }: ServiceDetailsProps) {
         </nav>
       </div>
 
-      <div className="mx-auto w-full max-w-6xl px-4 pt-10 sm:px-6 lg:px-8 lg:pt-14">
+      <div className="mx-auto w-full max-w-[1600px] px-4 pt-10 sm:px-6 lg:px-8 lg:pt-14">
         <Link
           href="/services"
           className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-[#6d2e46] transition hover:gap-3"

@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       ],
       metadata: { appointmentId },
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/checkout?id=${encodeURIComponent(appointmentId)}&canceled=true`,
+      cancel_url: `${origin}/checkout/cancel?appointmentId=${encodeURIComponent(appointmentId)}`,
     });
 
     return NextResponse.json({ url: session.url });

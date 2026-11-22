@@ -60,7 +60,7 @@ export function PaymentCheckout({
 
   return (
     <main className="min-h-svh bg-[#fdf9f6] px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-4xl">
+      <div className="mx-auto w-full max-w-[1600px]">
         <Link
           href="/dashboard/patrons/appointments"
           className="inline-flex items-center gap-2 text-sm font-medium text-[#6d2e46] transition hover:text-[#512033]"

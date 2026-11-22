@@ -16,7 +16,7 @@ export async function FeaturedServices() {
 
   return (
     <section className="bg-[#fdf9f6] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto w-full max-w-[1600px]">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#c9a227]">
             Our Services
@@ -44,7 +44,7 @@ export async function FeaturedServices() {
             No services available right now. Please check back soon.
           </p>
         ) : (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {services.map((s) => (
               <article
                 key={s._id}

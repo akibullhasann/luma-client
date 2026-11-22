@@ -194,7 +194,7 @@ export function ManageServices({ services: initialServices, error }: ManageServi
               Add your first service to start building your salon catalog.
             </p>
             <Link
-              href="/dashboard/admin/services/add"
+              href="/dashboard/admin/services/new"
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#6d2e46] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#512033]"
             >
               <Plus className="size-4" aria-hidden="true" />

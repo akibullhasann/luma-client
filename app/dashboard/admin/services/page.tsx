@@ -12,7 +12,7 @@ const ManageServicesPage = async () => {
     console.log(res)
     return (
         <main className="min-h-screen bg-[#fdf9f6] px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
-            <div className="mx-auto max-w-6xl">
+            <div className="mx-auto w-full max-w-[1600px]">
                 <ManageServices services={res} error={null}/>
             </div>
         </main>

@@ -1,15 +1,13 @@
+import "server-only";
+
+import { authFetch } from "@/lib/core/server";
 import { Appointment } from "@/typescript";
-
-
-const BASE_URL =
-  (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").trim() || "http://localhost:8000";
 
 export const getAppointments = async (
   query: string = ""
 ): Promise<Appointment[]> => {
-  const res = await fetch(`${BASE_URL}/appointments?${query}`, {
-    cache: "no-store",
-  });
+  const path = query ? `/appointments?${query}` : "/appointments";
+  const res = await authFetch(path);
 
   if (!res.ok) {
     throw new Error(`The appointments API responded with ${res.status}.`);

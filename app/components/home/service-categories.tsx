@@ -78,7 +78,7 @@ export async function ServiceCategories() {
 
   return (
     <section className="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto w-full max-w-[1600px]">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#c9a227]">
             Browse by Category

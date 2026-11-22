@@ -51,7 +51,7 @@ const MyAppointmentsPage = async () => {
 
   return (
     <main className="min-h-svh bg-[#fdf9f6] px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-[1600px]">
         <MyAppointments appointments={appointments} error={error} />
       </div>
     </main>
