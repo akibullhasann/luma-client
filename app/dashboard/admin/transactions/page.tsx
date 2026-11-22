@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { CreditCard, DollarSign, ReceiptText, ShieldCheck } from "lucide-react";
 
 import { getAppointments } from "@/lib/api/appoinments";
-import { requireRole } from "@/lib/core/server";
+import { getService } from "@/lib/api/services";
+import { getSession, requireRole } from "@/lib/core/server";
 import type { Appointment } from "@/typescript";
 
 export const metadata: Metadata = {
@@ -38,14 +39,21 @@ function formatCurrency(amount: number) {
 
 export default async function AdminTransactionsPage() {
   await requireRole("admin");
+  const session = await getSession();
+  const adminId = session?.user?.id ?? "";
 
   let transactions: TransactionRow[] = [];
   let error: string | null = null;
 
   try {
-    const appointments = (await getAppointments()) as TransactionRow[];
+    const [services, appointments] = await Promise.all([
+      getService(adminId ? `adminId=${adminId}` : ""),
+      getAppointments() as Promise<TransactionRow[]>,
+    ]);
+    const adminServiceIds = new Set(services.map((s) => s._id));
+
     transactions = appointments
-      .filter((a) => a.paymentStatus === "paid")
+      .filter((a) => a.paymentStatus === "paid" && adminServiceIds.has(a.serviceId))
       .sort((a, b) => {
         const da = new Date(a.paidAt || a.createdAt || 0).getTime();
         const db = new Date(b.paidAt || b.createdAt || 0).getTime();

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import Link from "next/link";
 import {
   CalendarClock,
@@ -13,7 +12,6 @@ import {
 
 import { getAppointments } from "@/lib/api/appoinments";
 import { getService } from "@/lib/api/services";
-import { auth } from "@/lib/auth";
 import { getSession } from "@/lib/core/server";
 import type { Appointment } from "@/typescript";
 
@@ -21,50 +19,53 @@ export const metadata: Metadata = {
   title: "Dashboard Overview — SalonBook",
 };
 
-// Fetches request-time data from the services API and Better Auth.
+// Fetches request-time data from the services and appointments APIs.
 export const instant = false;
 
 const AdminDashboardPage = async () => {
-  const requestHeaders = await headers();
   const session = await getSession();
+  const adminId = session?.user?.id ?? "";
 
   let totalCustomers = 0;
   let activeServices = 0;
   let appointments: Appointment[] = [];
   let error: string | null = null;
 
-  const [servicesResult, appointmentsResult, usersResult] =
-    await Promise.allSettled([
-      getService("status=active"),
-      getAppointments(),
-      auth.api.listUsers({ query: {}, headers: requestHeaders }),
-    ]);
+  const [servicesResult, appointmentsResult] = await Promise.allSettled([
+    getService(adminId ? `adminId=${adminId}` : ""),
+    getAppointments(),
+  ]);
 
   if (servicesResult.status === "fulfilled") {
-    activeServices = servicesResult.value.length;
+    const adminServices = servicesResult.value;
+    activeServices = adminServices.filter((s) => s.status === "active").length;
+    const adminServiceIds = new Set(adminServices.map((s) => s._id));
+
+    if (appointmentsResult.status === "fulfilled") {
+      appointments = appointmentsResult.value.filter((item) =>
+        adminServiceIds.has(item.serviceId)
+      );
+    }
+  } else if (appointmentsResult.status === "fulfilled") {
+    appointments = [];
   }
-  if (appointmentsResult.status === "fulfilled") {
-    appointments = appointmentsResult.value;
-  }
-  if (usersResult.status === "fulfilled") {
-    totalCustomers = usersResult.value.users.filter(
-      (user) => user.role !== "admin"
-    ).length;
-  }
-  if (
-    servicesResult.status === "rejected" ||
-    appointmentsResult.status === "rejected" ||
-    usersResult.status === "rejected"
-  ) {
+
+  if (appointmentsResult.status === "rejected" || servicesResult.status === "rejected") {
     error = "Some overview data could not be loaded.";
   }
+
+  totalCustomers = new Set(
+    appointments
+      .map((item) => item.customerId)
+      .filter((id): id is string => Boolean(id))
+  ).size;
 
   const count = (status: Appointment["status"]) =>
     appointments.filter((item) => item.status === status).length;
 
   const stats = [
     {
-      label: "Total Registered Customers",
+      label: "Total Customers",
       value: totalCustomers,
       icon: Users,
       tone: "bg-[#f6e3e6] text-[#6d2e46]",

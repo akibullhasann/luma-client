@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { protectedMutation } from "@/lib/core/server";
 import type { ServiceFormValues } from "@/typescript";
 
@@ -9,6 +11,7 @@ export const createService = async (data: ServiceFormValues) => {
   if (!res.ok) {
     throw new Error(result?.message || `Create failed with ${res.status}.`);
   }
+  revalidatePath("/dashboard/admin/services");
   return result;
 };
 

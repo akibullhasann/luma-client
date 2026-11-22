@@ -198,6 +198,7 @@ const AddServicesPage = () => {
             if (result.insertedId) {
                 toast.success('The service has been successfully created.')
                 router.push('/dashboard/admin/services')
+                router.refresh()
             }
 
             

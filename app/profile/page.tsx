@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 
 import { getSession } from "@/lib/core/server";
 
+export const instant = false;
+
 export default async function ProfilePage() {
   const session = await getSession();
 

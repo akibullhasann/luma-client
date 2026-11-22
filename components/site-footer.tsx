@@ -145,7 +145,7 @@ export default function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center sm:flex-row sm:text-left">
           <p className="text-sm text-rose-soft/70">
-            © {new Date().getFullYear()} Luma Salon. All rights reserved.
+            © 2026 Luma Salon. All rights reserved.
           </p>
           <p className="text-sm text-rose-soft/70">
             Crafted with care for your beauty &amp; wellness.

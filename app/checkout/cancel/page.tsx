@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: "Payment Canceled — SalonBook",
 };
 
+export const instant = false;
+
 type PaymentCancelPageProps = {
   searchParams: Promise<{ appointmentId?: string | string[] }>;
 };

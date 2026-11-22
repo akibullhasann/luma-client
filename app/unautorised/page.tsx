@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "Unauthorised — SalonBook",
 }
 
-export const dynamic = "force-dynamic"
+export const instant = false
 
 const UnauthorisedPage = async () => {
   const session = await getSession()

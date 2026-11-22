@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "Payment Successful — SalonBook",
 };
 
+export const instant = false;
+
 type CheckoutSuccessPageProps = {
   searchParams: Promise<{ session_id?: string | string[] }>;
 };
