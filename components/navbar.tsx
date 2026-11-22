@@ -10,6 +10,7 @@ import {
   HiScissors,
   HiSparkles,
   HiSquares2X2,
+  HiStar,
   HiUser,
   HiUserCircle,
 } from "react-icons/hi2";
@@ -46,6 +47,7 @@ type NavUser = {
 const publicLinks = [
   { href: "/", label: "Home", icon: HiHome },
   { href: "/services", label: "Browse Services", icon: HiScissors },
+  { href: "/#why-choose-us", label: "Why Choose Us", icon: HiStar },
 ];
 
 export default function Navbar() {

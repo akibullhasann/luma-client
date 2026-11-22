@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   CalendarClock,
   Check,
@@ -11,6 +13,8 @@ import {
   X,
 } from "lucide-react";
 
+import { Toaster } from "@/components/ui/sonner";
+import { updateAppointmentStatus } from "@/lib/actions/appoinments";
 import type { Appointment, AppointmentStatus, PaymentStatus } from "@/typescript";
 import { AppointmentDetailsDialog } from "./appointment-details-dialog";
 
@@ -64,14 +68,65 @@ export function ManageAppointments({
   appointments: initialAppointments,
   error,
 }: ManageAppointmentsProps) {
-  const [appointments] = useState<Appointment[]>(initialAppointments); // TODO: লজিকে setAppointments লাগবে
+  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
-  const [busyId] = useState<string | null>(null); // TODO
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const router = useRouter();
 
-  // TODO: লজিক এখানে বসাও
-  const handleConfirm = (a: Appointment) => {};
-  const handleCancel = (a: Appointment) => {};
+  const handleConfirm = async (a: Appointment) => {
+    if (a.status !== "pending") {
+      toast.error("Only pending requests can be confirmed.");
+      return;
+    }
+
+    try {
+      setBusyId(a._id);
+      await updateAppointmentStatus(a._id, "confirmed");
+      setAppointments((current) =>
+        current.map((item) =>
+          item._id === a._id ? { ...item, status: "confirmed" as const } : item
+        )
+      );
+      toast.success("Appointment confirmed.");
+      router.refresh();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Could not confirm appointment."
+      );
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleCancel = async (a: Appointment) => {
+    if (a.status !== "pending" && a.status !== "confirmed") {
+      toast.error("Only pending or confirmed appointments can be cancelled.");
+      return;
+    }
+    if (a.paymentStatus === "paid") {
+      toast.error("Paid appointments cannot be cancelled.");
+      return;
+    }
+
+    try {
+      setBusyId(a._id);
+      await updateAppointmentStatus(a._id, "cancelled");
+      setAppointments((current) =>
+        current.map((item) =>
+          item._id === a._id ? { ...item, status: "cancelled" as const } : item
+        )
+      );
+      toast.success("Appointment cancelled.");
+      router.refresh();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Could not cancel appointment."
+      );
+    } finally {
+      setBusyId(null);
+    }
+  };
 
  
   const visible = appointments.filter((a) => {
@@ -107,6 +162,7 @@ export function ManageAppointments({
 
   return (
     <div className="space-y-8">
+      <Toaster />
       {/* Header */}
       <div className="flex items-center gap-4">
         <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#6d2e46] to-[#512033] text-white shadow-lg shadow-[#6d2e46]/25">

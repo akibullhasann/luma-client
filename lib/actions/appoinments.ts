@@ -21,3 +21,33 @@ export const createAppoinments = async (data: AppointmentFormValues) => {
 
   return result;
 };
+
+
+
+
+
+
+export const updateAppointmentStatus = async (
+  id: string,
+  status: "confirmed" | "cancelled"
+) => {
+  const res = await fetch(`${BASE_URL}/appointments/${id}`, {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Could not update the appointment.");
+  return result;
+};
+
+export const deleteAppointment = async (id: string) => {
+  const res = await fetch(`${BASE_URL}/appointments/${id}`, {
+    method: "DELETE",
+  });
+
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message || "Could not delete the appointment.");
+  return result;
+};

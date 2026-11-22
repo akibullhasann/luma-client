@@ -12,9 +12,19 @@ export const metadata: Metadata = {
 // Reads request-time data from the services API.
 export const instant = false;
 
-const BrowseServicesPage = async () => {
+type BrowseServicesPageProps = {
+  searchParams: Promise<{ category?: string | string[] }>;
+};
+
+const BrowseServicesPage = async ({ searchParams }: BrowseServicesPageProps) => {
   let services: Service[] = [];
   let error: string | null = null;
+
+  const params = await searchParams;
+  const rawCategory = params.category;
+  const initialCategory = Array.isArray(rawCategory)
+    ? rawCategory[0] ?? ""
+    : rawCategory ?? "";
 
   try {
     services = await getService("status=active");
@@ -22,7 +32,14 @@ const BrowseServicesPage = async () => {
     error = "Services are unavailable right now. Please try again later.";
   }
 
-  return <BrowseServices services={services} error={error} />;
+  return (
+    <BrowseServices
+      key={initialCategory}
+      services={services}
+      error={error}
+      initialCategory={initialCategory}
+    />
+  );
 };
 
 export default BrowseServicesPage;

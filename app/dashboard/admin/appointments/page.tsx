@@ -11,10 +11,7 @@ export const metadata: Metadata = {
 // Fetches request-time data from the appointments API.
 export const instant = false;
 
-type AppointmentResponse = Omit<
-  Appointment,
-  "customerName" | "customerEmail" | "serviceName" | "serviceImage" | "serviceCategory"
-> & {
+type AppointmentResponse = Appointment & {
   service?: { serviceName?: string; image?: string; category?: string };
   customer?: { name?: string; email?: string };
 };
@@ -23,11 +20,11 @@ const normalizeAppointment = (item: AppointmentResponse): Appointment => {
   const { service, customer, ...rest } = item;
   return {
     ...rest,
-    customerName: customer?.name ?? "",
-    customerEmail: customer?.email ?? "",
-    serviceName: service?.serviceName ?? "",
-    serviceImage: service?.image ?? "",
-    serviceCategory: service?.category ?? "",
+    customerName: customer?.name ?? item.customerName ?? "",
+    customerEmail: customer?.email ?? item.customerEmail ?? "",
+    serviceName: service?.serviceName ?? item.serviceName ?? "",
+    serviceImage: service?.image ?? item.serviceImage ?? "",
+    serviceCategory: service?.category ?? item.serviceCategory ?? "",
   };
 };
 

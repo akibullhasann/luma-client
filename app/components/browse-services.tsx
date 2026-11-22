@@ -10,11 +10,16 @@ import ServiceFilters from "@/app/components/service-filters";
 type BrowseServicesProps = {
   services: Service[];
   error: string | null;
+  initialCategory?: string;
 };
 
-export function BrowseServices({ services, error }: BrowseServicesProps) {
+export function BrowseServices({
+  services,
+  error,
+  initialCategory = "",
+}: BrowseServicesProps) {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(initialCategory);
   const [sort, setSort] = useState("");
 
   const visible = useMemo(() => {
